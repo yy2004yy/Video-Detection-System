@@ -16,16 +16,18 @@
 ```bash
 git clone [https://github.com/yy2004yy/Video-Detection-System.git](https://github.com/yy2004yy/Video-Detection-System.git)
 cd Video-Detection-System
-2. 安装依赖
-Bash
-
+```
+### 2. 安装依赖
+```bash
 pip install -r requirements.txt
-3. 运行代码
-Bash
-
+```
+### 3. 运行代码
 # 示例运行指令
+``` bash
 python main.py
-⚠️ 关于模型权重 (Important)
+```
+
+## ⚠️ 关于模型权重 (Important)
 由于 GitHub 文件大小限制，大模型权重文件（如 CLIP 预训练模型）未包含在此仓库中。 请在运行前确保：
 
 手动下载所需的模型权重（.pth 或 .bin 文件）。
@@ -56,3 +58,4 @@ python main.py
 git add README.md
 git commit -m "添加项目说明文档"
 git push
+```
