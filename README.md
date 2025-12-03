@@ -22,7 +22,7 @@ cd Video-Detection-System
 pip install -r requirements.txt
 ```
 ### 3. 运行代码
-# 示例运行指令
+示例运行指令
 ``` bash
 python main.py
 ```
