@@ -104,8 +104,8 @@ def load_clip_model(device, model_name="openai/clip-vit-base-patch32"):
     Returns:
         model, processor: CLIP模型和处理器
     """
-    print(f"⏳ 正在从 HuggingFace 下载并加载 CLIP 模型: {model_name}")
-    print(f"📁 模型缓存目录: {MODEL_CACHE_DIR}")
+    print(f"⏳  正在从 HuggingFace 下载并加载 CLIP 模型: {model_name}")
+    print(f"📁  模型缓存目录: {MODEL_CACHE_DIR}")
     
     try:
         # 加载模型到指定设备

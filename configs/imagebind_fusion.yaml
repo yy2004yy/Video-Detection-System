@@ -1,0 +1,29 @@
+# ImageBind 多模态融合配置
+model:
+  name: "imagebind_fusion"
+  backbone: "imagebind"
+  imagebind_model_name: "facebook/imagebind-base"
+  
+data:
+  video_dir: "./data/videos"
+  audio_dir: "./data/audio"
+  num_frames: 8
+  frame_size: 224
+  audio_sample_rate: 16000
+  
+training:
+  batch_size: 8
+  num_epochs: 50
+  learning_rate: 5e-5
+  weight_decay: 1e-5
+  save_dir: "./checkpoints"
+  log_dir: "./logs"
+  
+device:
+  gpu_id: 3
+  use_cuda: true
+  
+hf_mirror:
+  enabled: true
+  endpoint: "https://hf-mirror.com"
+

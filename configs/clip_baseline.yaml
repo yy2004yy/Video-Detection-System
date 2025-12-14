@@ -1,0 +1,27 @@
+# CLIP Baseline 配置
+model:
+  name: "clip_baseline"
+  backbone: "clip"
+  clip_model_name: "openai/clip-vit-base-patch32"
+  
+data:
+  video_dir: "./data/videos"
+  num_frames: 8
+  frame_size: 224
+  
+training:
+  batch_size: 16
+  num_epochs: 50
+  learning_rate: 1e-4
+  weight_decay: 1e-5
+  save_dir: "./checkpoints"
+  log_dir: "./logs"
+  
+device:
+  gpu_id: 3
+  use_cuda: true
+  
+hf_mirror:
+  enabled: true
+  endpoint: "https://hf-mirror.com"
+
