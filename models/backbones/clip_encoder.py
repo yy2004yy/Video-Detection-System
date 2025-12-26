@@ -83,26 +83,41 @@ class CLIPEncoder(nn.Module):
         
         # 如果输入已经是tensor，直接使用
         if isinstance(images, torch.Tensor):
-            # 假设输入是 [batch_size, num_frames, C, H, W]
-            batch_size, num_frames = images.shape[:2]
-            images = images.view(batch_size * num_frames, *images.shape[2:])
+            device = next(self.parameters()).device
             
-            # 预处理图像（需要转换为PIL格式或使用vision transformer）
-            # 这里简化处理，假设已经预处理过
-            # 实际使用时可能需要更复杂的处理
+            # 处理不同的tensor形状
+            if images.dim() == 4:  # [batch_size, C, H, W]
+                batch_size = images.shape[0]
+                num_frames = 1
+                images = images.unsqueeze(1)  # [batch_size, 1, C, H, W]
+            elif images.dim() == 5:  # [batch_size, num_frames, C, H, W]
+                batch_size, num_frames = images.shape[:2]
+            else:
+                raise ValueError(f"不支持的tensor维度: {images.dim()}, 期望4或5维")
             
-            # 使用vision encoder
+            # 展平为 [batch_size * num_frames, C, H, W]
+            images_flat = images.view(batch_size * num_frames, *images.shape[2:])
+            
+            # 确保输入在正确的设备上
+            if images_flat.device != device:
+                images_flat = images_flat.to(device)
+            
+            # CLIP的vision_model期望normalized的pixel values
+            # 如果输入是[0,1]范围的tensor，需要转换为CLIP期望的格式
+            # CLIP内部使用processor时会做normalization，但直接调用vision_model时
+            # 需要确保输入格式正确（通常是[0,1]范围，然后内部会normalize）
+            # 这里假设输入已经是[0,1]范围的tensor（经过ToTensor）
+            
+            # 使用vision encoder提取特征
             with torch.no_grad():
-                pixel_values = images
-                if pixel_values.device != next(self.parameters()).device:
-                    pixel_values = pixel_values.to(next(self.parameters()).device)
-                
-                outputs = self.model.vision_model(pixel_values=pixel_values)
-                image_features = outputs.pooler_output
-                image_features = self.model.visual_projection(image_features)
+                vision_outputs = self.model.vision_model(pixel_values=images_flat)
+                # 获取pooled特征
+                image_features = vision_outputs.pooler_output  # [batch_size * num_frames, hidden_size]
+                # 通过visual projection
+                image_features = self.model.visual_projection(image_features)  # [batch_size * num_frames, feature_dim]
             
             # 重新reshape: [batch_size, num_frames, feature_dim]
-            image_features = image_features.view(batch_size, num_frames, -1)
+            image_features = image_features.view(batch_size, num_frames, self.feature_dim)
             
             # 对帧特征进行平均池化
             image_features = image_features.mean(dim=1)  # [batch_size, feature_dim]
